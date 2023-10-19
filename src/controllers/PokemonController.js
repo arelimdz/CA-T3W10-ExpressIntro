@@ -1,21 +1,11 @@
 const express = require('express');
 
+const {checkForAlex} = require("./PokemonMiddleware")
+
 // create an instance of the Express router 
 
 const router = express.Router();
 
-router.get("/", (request, response) => {
-	response.json({
-		message:"Hello world from a router!"
-	});
-});
-
-// Create out of CRUD 
-// router.post("/", (request, response) => {
-// 	response.json({
-// 		message:"POST request received!"
-// 	})
-// });
 
 // GET /pokemon/25 
 router.get("/:numberOfLePokemon", async (request, response) => {
@@ -29,14 +19,23 @@ router.get("/:numberOfLePokemon", async (request, response) => {
 	});
 });
 
-// POST /pokemon/25 
-router.post("/", async (request, response) => {
-	// let pokemonId = request.params.numberOfLePokemon;
-	if (request.body.username != "alex"){
-		return response.json({
-			message:"You are not authorised!"
-		});
-	}
+
+/*
+router.post(
+	"/",
+	checkForAlex,
+	someOtherMiddleware,
+	WhateverMiddlewareWeCreated,
+	BlahBlahBlah,
+	async (request, response) => {}
+)
+*/
+
+
+
+// POST /pokemon/
+router.post("/", checkForAlex, async (request, response) => {
+	
 
 	let result = await fetch("https://pokeapi.co/api/v2/pokemon/" + request.body.pokemonId);
 	let data = await result.json();
@@ -47,10 +46,6 @@ router.post("/", async (request, response) => {
 		pokemonId: request.body.pokemonId  
 	});
 });
-
-
-
-
 
 
 router.get("/bananas", async (request, response) => {
@@ -64,6 +59,22 @@ router.get("/bananas", async (request, response) => {
 		pokemonName: data.name
 	});
 });
+
+
+// Create out of CRUD 
+// router.post("/", (request, response) => {
+// 	response.json({
+// 		message:"POST request received!"
+// 	})
+// });
+
+// router.get("/", (request, response) => {
+// 	response.json({
+// 		message:"Hello world from a router!"
+// 	});
+// });
+
+
 
 
 module.exports = router;
