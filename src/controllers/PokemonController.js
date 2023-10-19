@@ -1,7 +1,7 @@
 const express = require('express');
 
 const {checkForAlex} = require("./PokemonMiddleware")
-
+const {body, validationResult} = require('express-validator');
 // create an instance of the Express router 
 
 const router = express.Router();
@@ -34,8 +34,19 @@ router.post(
 
 
 // POST /pokemon/
-router.post("/", checkForAlex, async (request, response) => {
-	
+router.post(
+	"/", 
+	// checkForAlex, 
+	body('username').trim().isLength({min: 4, max: 9}),
+	async (request, response) => {
+		const errors = validationResult(request);
+		if (!errors.isEmpty()){
+			return response.status(400).json({
+				message:"You dun goofed",
+				errors: errors.array()
+			})
+		}
+
 
 	let result = await fetch("https://pokeapi.co/api/v2/pokemon/" + request.body.pokemonId);
 	let data = await result.json();
