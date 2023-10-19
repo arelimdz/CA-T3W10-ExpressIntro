@@ -11,20 +11,46 @@ router.get("/", (request, response) => {
 });
 
 // Create out of CRUD 
-router.post("/", (request, response) => {
+// router.post("/", (request, response) => {
+// 	response.json({
+// 		message:"POST request received!"
+// 	})
+// });
+
+// GET /pokemon/25 
+router.get("/:numberOfLePokemon", async (request, response) => {
+	let pokemonId = request.params.numberOfLePokemon;
+
+	let result = await fetch("https://pokeapi.co/api/v2/pokemon/" +  pokemonId);
+	let data = await result.json();
+
 	response.json({
-		message:"POST request received!"
-	})
+		name: data.name
+	});
+});
+
+// POST /pokemon/25 
+router.post("/", async (request, response) => {
+	// let pokemonId = request.params.numberOfLePokemon;
+	if (request.body.username != "alex"){
+		return response.json({
+			message:"You are not authorised!"
+		});
+	}
+
+	let result = await fetch("https://pokeapi.co/api/v2/pokemon/" + request.body.pokemonId);
+	let data = await result.json();
+
+	response.json({
+		name: data.name,
+		username: request.body.username,
+		pokemonId: request.body.pokemonId  
+	});
 });
 
 
 
-// router.get("/bananas", (request, response) => {
 
-// 	response.json({
-// 		message: "bananas!"
-// 	});
-// });
 
 
 router.get("/bananas", async (request, response) => {
